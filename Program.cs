@@ -5,11 +5,18 @@ class Card
 {
     public string Suit { get; }
     public string Face { get; }
+    // public int Value { get; }
+
+    public int Value()
+    {
+        return 2;
+    }
 
     public Card(string newSuit, string newFace)
     {
         Suit = newSuit;
         Face = newFace;
+        // Value = Convert.ToInt32(value);
     }
     public string Description()
     {
@@ -26,6 +33,7 @@ class Deck
         Cards = new List<Card>();
         var suits = new List<string>() { "Hearts", "Spades", "Diamonds", "Clubs" };
         var faces = new List<string>() { "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King" };
+        // var values = new List<int>() { 11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10 };
 
         //        Shuffle the Deck 
         foreach (var suit in suits)
@@ -45,9 +53,7 @@ class Deck
         }
     }
 
-    public void Shuffle() /* - method to shuffle
-    
-     the deck  */
+    public void Shuffle() /* - method to shuffle the deck  */
     {
         var numberOfCards = Cards.Count; /*<---works*/
 
@@ -116,17 +122,60 @@ namespace blackJack2
             Console.WriteLine(playerHand[0].Description());
             Console.WriteLine(playerHand[1].Description());
 
-            // Deal two cards to a dealer’s hand
-            var dealerHand = new List<Card>();
-            dealerHand.Add(deck.Deal());
-            dealerHand.Add(deck.Deal());
-            Console.WriteLine(dealerHand[0].Description());
-            Console.WriteLine(dealerHand[1].Description());
+            // foreach (Card card in playerHand)
+            // {
+            //     Console.WriteLine($"{card.Face} of {card.Suit}");
+            // }
 
-            Console.WriteLine(deck.Cards.Count);
+            /* we'll get back to having both hands when the values are assigned*/
+
+            // // Deal two cards to a dealer’s hand
+            // var dealerHand = new List<Card>();
+            // dealerHand.Add(deck.Deal());
+            // dealerHand.Add(deck.Deal());
+            // Console.WriteLine(dealerHand[0].Description());
+            // Console.WriteLine(dealerHand[1].Description());
+
+            // Console.WriteLine(deck.Cards.Count);
 
             // Sum the value of the hand
+            var score = 0;
+            foreach (Card card in playerHand)
+            {
+                score += card.Value();
+            }
+            Console.WriteLine($"The score of your hand is {score}");
+
             // Ask user if they want to hit or stand.
+
+            while (score != 21) /* this is an open loop */
+            {
+                Console.WriteLine("Do you want another card? Y/N");
+                var Answer = Console.ReadLine();
+
+                if (Answer == "Y" || Answer == "y")
+                {
+                    playerHand.Add(deck.Deal());
+                    Console.WriteLine(playerHand[0].Description());
+                    Console.WriteLine(playerHand[1].Description());
+                    Console.WriteLine(playerHand[2].Description());
+                }
+                else
+                {
+
+                    Console.WriteLine($"The score of your hand is {score}");
+                }
+                // Console.WriteLine(score);
+
+            };
+
+            //   Dealer: (state)
+
+            // - if < 16 dealer must take another card
+            // - If #DEALERHAND >= 17, it must stand.
+
+            // #PLAYERWIN
+            // - if > DEALERHAND <= 21
 
             // If they want to hit, deal a card from the deck and add it to playerHand.
             // If they go over 21, end the game.
