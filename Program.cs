@@ -9,9 +9,31 @@ class Card
 
     public int Value()
     {
-        return 2;
-    }
+        switch (Face)
+        {
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+            case "10":
+                return int.Parse(Face);
 
+            case "Jack":
+            case "Queen":
+            case "King":
+                return 10;
+
+            case "Ace":
+                return 11;
+
+            default:
+                return 0;
+        }
+    }
     public Card(string newSuit, string newFace)
     {
         Suit = newSuit;
@@ -108,84 +130,132 @@ namespace blackJack2
     {
         static void Main(string[] args)
         {
-            var deck = new Deck();
-
-            deck.Shuffle();
-            // Console.WriteLine(deck.Deal().Description());
-            // Console.WriteLine(deck.Deal().Description());
-            Console.WriteLine(deck.Cards.Count);
-
-            // Deal two cards to a player’s hand
-            var playerHand = new List<Card>();
-            playerHand.Add(deck.Deal());
-            playerHand.Add(deck.Deal());
-            Console.WriteLine(playerHand[0].Description());
-            Console.WriteLine(playerHand[1].Description());
-
-            // foreach (Card card in playerHand)
-            // {
-            //     Console.WriteLine($"{card.Face} of {card.Suit}");
-            // }
-
-            /* we'll get back to having both hands when the values are assigned*/
-
-            // // Deal two cards to a dealer’s hand
-            // var dealerHand = new List<Card>();
-            // dealerHand.Add(deck.Deal());
-            // dealerHand.Add(deck.Deal());
-            // Console.WriteLine(dealerHand[0].Description());
-            // Console.WriteLine(dealerHand[1].Description());
-
-            // Console.WriteLine(deck.Cards.Count);
-
-            // Sum the value of the hand
-            var score = 0;
-            foreach (Card card in playerHand)
+            var continueGame = true;
+            while (continueGame)
             {
-                score += card.Value();
-            }
-            Console.WriteLine($"The score of your hand is {score}");
 
-            // Ask user if they want to hit or stand.
+                var deck = new Deck();
 
-            while (score != 21) /* this is an open loop */
-            {
-                Console.WriteLine("Do you want another card? Y/N");
-                var Answer = Console.ReadLine();
+                deck.Shuffle();
+                // Console.WriteLine(deck.Deal().Description());
+                // Console.WriteLine(deck.Deal().Description());
+                Console.WriteLine(deck.Cards.Count);
 
-                if (Answer == "Y" || Answer == "y")
+                // Deal two cards to a player’s hand
+                var playerHand = new List<Card>();
+                playerHand.Add(deck.Deal());
+                playerHand.Add(deck.Deal());
+                Console.WriteLine(playerHand[0].Description());
+                Console.WriteLine(playerHand[1].Description());
+
+                // foreach (Card card in playerHand)
+                // {
+                //     Console.WriteLine($"{card.Face} of {card.Suit}");
+                // }
+
+                /* we'll get back to having both hands when the values are assigned*/
+
+                // // Deal two cards to a dealer’s hand
+                var dealerHand = new List<Card>();
+                dealerHand.Add(deck.Deal());
+                dealerHand.Add(deck.Deal());
+
+
+                Console.WriteLine(deck.Cards.Count);
+
+                // Sum the value of the hand
+                var score = 0;
+                foreach (Card card in playerHand)
                 {
-                    playerHand.Add(deck.Deal());
-                    Console.WriteLine(playerHand[0].Description());
-                    Console.WriteLine(playerHand[1].Description());
-                    Console.WriteLine(playerHand[2].Description());
+                    score += card.Value();
+                }
+                Console.WriteLine($"The score of your hand is {score}");
+
+                // Ask user if they want to hit or stand.
+                var Answer = "n";
+                do
+                {
+                    Console.WriteLine("Do you want another card? Y/N");
+                    Answer = Console.ReadLine();
+                    if (Answer == "Y" || Answer == "y")
+                    {
+                        playerHand.Add(deck.Deal());
+                        Console.WriteLine(playerHand[0].Description());
+                        Console.WriteLine(playerHand[1].Description());
+                        Console.WriteLine(playerHand[2].Description());
+                    }
+                    // else
+                    // {
+                    //     Console.WriteLine("You've chosen to STAND");
+
+                    //     Console.WriteLine($"The score of your hand is {score}");
+                    // }
+                    score = 0;
+                    foreach (Card card in playerHand)
+                    {
+                        score += card.Value();
+                    }
+                    // Console.WriteLine(score);
+                    Console.WriteLine($"The score of your hand is {score}");
+                    // return score;
+                } while (score <= 21 && Answer == "Y");
+
+                if (score > 21)
+                {
+                    Console.WriteLine("Dealer Wins");
+
+                }
+
+                //   Dealer: (state)
+                // - if < 16 dealer must take another card
+                // - If #DEALERHAND >= 17, it must stand.
+                var dealerScore = 0;
+                foreach (Card card in dealerHand)
+                {
+                    dealerScore += card.Value();
+                }
+                Console.WriteLine(dealerHand[0].Description());
+                Console.WriteLine(dealerHand[1].Description());
+
+                while (dealerScore < 17)
+                {
+                    dealerHand.Add(deck.Deal());
+                    dealerScore = 0;
+                    foreach (Card card in dealerHand)
+                    {
+                        dealerScore += card.Value();
+                    }
+                    Console.WriteLine(dealerHand[dealerHand.Count - 1].Description());
+                }
+                if (dealerScore > 21)
+                {
+                    Console.WriteLine("House Loses");
+                }
+
+                if (score <= 21 && score > dealerScore)
+                {
+                    Console.WriteLine("Suck it, I wim");
                 }
                 else
                 {
-
-                    Console.WriteLine($"The score of your hand is {score}");
+                    Console.WriteLine("Go home you're drunk");
                 }
-                // Console.WriteLine(score);
+                Console.WriteLine("Do you want to play again? ");
+                // #PLAYERWIN
+                // - if > DEALERHAND <= 21
 
-            };
+                // If they want to hit, deal a card from the deck and add it to playerHand.
+                // If they go over 21, end the game.
+                // Repeat until they stand.
+                // -	Once they stand, reveal computerHand.
+                // computerHand will hit until greater than or equal to 17.
+                // Compare computerHand and playerHand to see who wins.
+                // If a tie, computer wins.
+                // Ask if player wants to play again.
+                //    Create new game that clears both hands and reshuffles the deck.
 
-            //   Dealer: (state)
-
-            // - if < 16 dealer must take another card
-            // - If #DEALERHAND >= 17, it must stand.
-
-            // #PLAYERWIN
-            // - if > DEALERHAND <= 21
-
-            // If they want to hit, deal a card from the deck and add it to playerHand.
-            // If they go over 21, end the game.
-            // Repeat until they stand.
-            // -	Once they stand, reveal computerHand.
-            // computerHand will hit until greater than or equal to 17.
-            // Compare computerHand and playerHand to see who wins.
-            // If a tie, computer wins.
-            // Ask if player wants to play again.
-            //    Create new game that clears both hands and reshuffles the deck.
+                continueGame = Console.ReadLine() == "Y";
+            }
         }
     }
 }
